@@ -1,0 +1,37 @@
+/* ===============================================
+WidgetBot Plugin - Frontend CSS
+=============================================== */
+
+.WidgetBot-container {
+	padding: 20px;
+	border-radius: 8px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+}
+
+.WidgetBot-title {
+	color: #1e293b;
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-bottom: 12px;
+}
+
+.WidgetBot-content {
+	color: #64748b;
+	line-height: 1.6;
+}
+
+.WidgetBot-button {
+	background: #6366f1;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color 0.2s;
+}
+
+.WidgetBot-button:hover {
+	background: #4f46e5;
+}

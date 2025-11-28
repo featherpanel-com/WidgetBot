@@ -1,0 +1,35 @@
+plugin:
+  name: WidgetBot
+  identifier: widgetbot
+  description: 'Discord, right from your site'
+  flags:
+    - hasInstallScript
+    - hasRemovalScript
+    - hasUpdateScript
+  version: 1.0.0
+  target: v2
+  author:
+    - NaysKUtzu
+  icon: 'https://widgetbot.io/logo.svg'
+  requiredConfigs:
+    - server_id
+    - channel_id
+  dependencies:
+    - php-ext=pdo
+config:
+  -
+    name: server_id
+    display_name: 'Your discord server id!'
+    type: text
+    description: 'Make sure you also invite the bot before: https://add.widgetbot.io/'
+    required: true
+    validation: {  }
+    default: '1399372922480492608'
+  -
+    name: channel_id
+    display_name: 'Channel ID'
+    type: text
+    description: 'The id of the channel you want to display!'
+    required: true
+    validation: {  }
+    default: '1418278137975799868'
