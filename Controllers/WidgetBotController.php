@@ -49,7 +49,7 @@ class WidgetBotController
 
 		if ($serverId === null || $channelId === null) {
 			return ApiResponse::error(
-				'WidgetBot is not configured. Please set server_id and channel_id in the addon settings.',
+				'No configuration provided. Please configure WidgetBot inside the plugins area.',
 				'WIDGETBOT_NOT_CONFIGURED',
 				500
 			);
@@ -59,6 +59,19 @@ class WidgetBotController
 			[
 				'server_id' => $serverId,
 				'channel_id' => $channelId,
+				// Extra options passed directly to the WidgetBot Crate constructor
+				// so users can customize behaviour via the plugin settings UI.
+				'crate_options' => [
+					// Button color, e.g. '#5865F2'
+					'color' => PluginSettings::getSetting('widgetbot', 'crate_color') ?? null,
+					// Crate location, e.g. ['bottom', 'right']
+					'location' => [
+						PluginSettings::getSetting('widgetbot', 'crate_location_vertical') ?? 'bottom',
+						PluginSettings::getSetting('widgetbot', 'crate_location_horizontal') ?? 'right',
+					],
+					// Enable/disable notifications (true/false)
+					'notifications' => PluginSettings::getSetting('widgetbot', 'crate_notifications') === 'true',
+				],
 			],
 			'WidgetBot configuration loaded',
 			200
@@ -77,8 +90,10 @@ class WidgetBotController
 
 		if ($serverId === null || $channelId === null) {
 			$html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>WidgetBot</title></head>'
-				. '<body style="margin:0;background:#111;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;">'
-				. '<p>WidgetBot is not configured. Please set server_id and channel_id in FeatherPanel.</p>'
+				. '<body style="margin:0;background:#020617;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;text-align:center;padding:1.5rem;">'
+				. '<p style="max-width:32rem;line-height:1.5;">'
+				. 'No configuration provided. Please configure WidgetBot inside the plugins area.'
+				. '</p>'
 				. '</body></html>';
 
 			return new Response($html, 500, ['Content-Type' => 'text/html; charset=utf-8']);
@@ -118,8 +133,8 @@ class WidgetBotController
 <widgetbot
   server="{$serverIdEscaped}"
   channel="{$channelIdEscaped}"
-  width="100%"
-  height="100%"
+  width="800"
+  height="600"
 ></widgetbot>
 
 <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed" async></script>

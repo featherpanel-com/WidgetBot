@@ -21,25 +21,42 @@ function waitForAPI() {
   });
 }
 
+// Wait for WidgetBot Crate script to be available
+function waitForCrate() {
+  return new Promise((resolve) => {
+    if (window.Crate) {
+      resolve();
+    } else {
+      const check = setInterval(() => {
+        if (window.Crate) {
+          clearInterval(check);
+          resolve();
+        }
+      }, 100);
+    }
+  });
+}
+
 // Main WidgetBot Plugin Class
 class WidgetBotPlugin {
   constructor() {
     this.api = null;
+    this.crate = null;
   }
 
   async init(api) {
     this.api = api;
     console.log("🚀 WidgetBot Plugin initialized!");
 
-    // Automatically inject the WidgetBot embed once the plugin is ready
+    // Automatically initialize the WidgetBot Crate once the plugin is ready
     try {
-      await this.injectWidgetBotEmbed();
+      await this.initCrate();
     } catch (e) {
-      console.error("❌ Failed to inject WidgetBot embed:", e);
+      console.error("❌ Failed to initialize WidgetBot Crate:", e);
     }
   }
 
-  async injectWidgetBotEmbed() {
+  async initCrate() {
     try {
       const response = await fetch("/api/public/widgetbot/config");
       const result = await response.json();
@@ -52,50 +69,64 @@ class WidgetBotPlugin {
         return;
       }
 
-      const { server_id: serverId, channel_id: channelId } = result.data;
-      if (!serverId || !channelId) {
-        console.warn("WidgetBot config missing server_id or channel_id");
+      const {
+        server_id: serverId,
+        channel_id: channelId,
+        crate_options: crateOptions,
+      } = result.data;
+
+      if (!serverId) {
+        console.warn("WidgetBot config missing server_id");
         return;
       }
 
-      // Inject the WidgetBot script
-      if (!document.querySelector('script[src*="@widgetbot/html-embed"]')) {
+      // Inject the WidgetBot Crate script
+      if (!document.querySelector('script[src*="@widgetbot/crate@3"]')) {
         const script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/@widgetbot/html-embed";
+        script.src = "https://cdn.jsdelivr.net/npm/@widgetbot/crate@3";
         script.async = true;
-        document.head.appendChild(script);
+        script.defer = true;
+        document.body.appendChild(script);
       }
 
-      // Create a container in the DOM for the widget if it doesn't exist yet
-      let container = document.getElementById("widgetbot-embed-container");
-      if (!container) {
-        container = document.createElement("div");
-        container.id = "widgetbot-embed-container";
-        container.style.position = "fixed";
-        container.style.bottom = "1.5rem";
-        container.style.right = "1.5rem";
-        container.style.width = "400px";
-        container.style.height = "600px";
-        container.style.zIndex = "9999";
-        container.style.borderRadius = "0.75rem";
-        container.style.overflow = "hidden";
-        container.style.boxShadow = "0 20px 40px rgba(0,0,0,0.45)";
-        document.body.appendChild(container);
-      } else {
-        container.innerHTML = "";
+      // Wait until Crate is available on window
+      await waitForCrate();
+
+      const options = {
+        server: serverId,
+      };
+
+      if (channelId) {
+        options.channel = channelId;
       }
 
-      // Create the <widgetbot> element
-      const widget = document.createElement("widgetbot");
-      widget.setAttribute("server", serverId);
-      widget.setAttribute("channel", channelId);
-      widget.setAttribute("width", "100%");
-      widget.setAttribute("height", "100%");
+      if (crateOptions && typeof crateOptions === "object") {
+        Object.assign(options, crateOptions);
+      }
 
-      container.appendChild(widget);
-      console.log("✅ WidgetBot embed injected into the page");
+      // Override location to position it higher up to avoid collision with FeatherAI agent
+      // Use a numeric offset from bottom (150px) instead of just "bottom"
+      const verticalPos = options.location?.[0] || "bottom";
+      const horizontalPos = options.location?.[1] || "left";
+
+      // If vertical is "bottom", convert it to a numeric offset to move it higher
+      if (verticalPos === "bottom") {
+        options.location = [150, horizontalPos]; // 150px from bottom = higher up
+      } else if (typeof verticalPos === "string") {
+        // Keep as-is if it's "top" or already a number
+        options.location = [verticalPos, horizontalPos];
+      }
+
+      // Initialize the Crate widget
+      this.crate = new window.Crate(options);
+      window.WidgetBotCrate = this.crate;
+
+      console.log("✅ WidgetBot Crate initialized with options:", options);
     } catch (error) {
-      console.error("Failed to load WidgetBot config or inject embed:", error);
+      console.error(
+        "Failed to load WidgetBot config or initialize Crate:",
+        error
+      );
     }
   }
 }

@@ -1,7 +1,7 @@
 plugin:
   name: WidgetBot
   identifier: widgetbot
-  description: 'Discord, right from your site'
+  description: "Discord, right from your site"
   flags:
     - hasInstallScript
     - hasRemovalScript
@@ -10,26 +10,52 @@ plugin:
   target: v2
   author:
     - NaysKUtzu
-  icon: 'https://widgetbot.io/logo.svg'
+  icon: "https://widgetbot.io/logo.svg"
   requiredConfigs:
     - server_id
     - channel_id
   dependencies:
     - php-ext=pdo
 config:
-  -
-    name: server_id
-    display_name: 'Your discord server id!'
+  - name: server_id
+    display_name: "Your discord server id!"
     type: text
-    description: 'Make sure you also invite the bot before: https://add.widgetbot.io/'
+    description: "Make sure you also invite the bot before: https://add.widgetbot.io/"
     required: true
-    validation: {  }
-    default: '1399372922480492608'
-  -
-    name: channel_id
-    display_name: 'Channel ID'
+    validation: {}
+    default: "1399372922480492608"
+  - name: channel_id
+    display_name: "Channel ID"
     type: text
-    description: 'The id of the channel you want to display!'
+    description: "The id of the channel you want to display!"
     required: true
-    validation: {  }
-    default: '1418278137975799868'
+    validation: {}
+    default: "1418278137975799868"
+  - name: crate_color
+    display_name: "Crate Button Color"
+    type: text
+    description: "Optional: Hex color for the WidgetBot crate button (e.g. #5865F2)."
+    required: false
+    validation: {}
+    default: ""
+  - name: crate_location_vertical
+    display_name: "Crate Vertical Location"
+    type: text
+    description: "Optional: Vertical location for the crate button: 'top', 'bottom' or a number."
+    required: false
+    validation: {}
+    default: "bottom"
+  - name: crate_location_horizontal
+    display_name: "Crate Horizontal Location"
+    type: text
+    description: "Optional: Horizontal location for the crate button: 'left', 'right' or a number."
+    required: false
+    validation: {}
+    default: "left"
+  - name: crate_notifications
+    display_name: "Enable Crate Notifications"
+    type: text
+    description: "Optional: Enable WidgetBot crate message notifications (true/false)."
+    required: false
+    validation: {}
+    default: "true"
