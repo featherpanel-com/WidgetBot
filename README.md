@@ -14,7 +14,7 @@ Integrate [WidgetBot](https://widgetbot.io/) Discord chat widgets directly into 
 ## Installation
 
 1. Install the plugin through the FeatherPanel plugin manager
-2. Navigate to **Plugins** → **WidgetBot** in the admin panel
+2. Navigate to **Admin** → **Plugins** → **WidgetBot** in the admin panel
 3. Configure your Discord server and channel IDs
 
 ## Configuration
@@ -45,89 +45,6 @@ Once configured, the WidgetBot Crate widget will automatically:
 3. Open a Discord chat widget when clicked
 4. Show your configured Discord server and channel
 
-## API Endpoints
-
-### Public Configuration API
-
-**GET** `/api/public/widgetbot/config`
-
-Returns the WidgetBot configuration as JSON (no authentication required):
-
-```json
-{
-  "success": true,
-  "data": {
-    "server_id": "299881420891881473",
-    "channel_id": "355719584830980096",
-    "crate_options": {
-      "color": "#5865F2",
-      "location": ["bottom", "left"],
-      "notifications": true
-    }
-  }
-}
-```
-
-### Embed Endpoint
-
-**GET** `/widgetbot/embed`
-
-Returns a standalone HTML page with the WidgetBot embed. Perfect for use in iframes on external sites:
-
-```html
-<iframe
-  src="https://your-panel-domain.com/widgetbot/embed"
-  width="800"
-  height="600"
-  style="border:none;"
->
-</iframe>
-```
-
-## Frontend Integration
-
-The plugin automatically injects the WidgetBot Crate script and initializes it with your configuration:
-
-```javascript
-// Automatically loaded on all pages
-<script
-  src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3"
-  async
-  defer
-></script>;
-
-// Initialized with your settings
-new Crate({
-  server: "YOUR_SERVER_ID",
-  channel: "YOUR_CHANNEL_ID",
-  location: [150, "left"], // Positioned higher to avoid UI collisions
-  // ... other options from your configuration
-});
-```
-
-## Customization
-
-### Programmatic Control
-
-The WidgetBot Crate instance is available globally as `window.WidgetBotCrate`, allowing you to control it via JavaScript:
-
-```javascript
-// Toggle the widget
-window.WidgetBotCrate.toggle();
-
-// Navigate to a different channel
-window.WidgetBotCrate.navigate("CHANNEL_ID");
-
-// Show a notification
-window.WidgetBotCrate.notify("Hello from FeatherPanel!");
-
-// Update options
-window.WidgetBotCrate.setOptions({
-  color: "#22c55e",
-  location: ["top", "right"],
-});
-```
-
 ### CSS Customization
 
 The WidgetBot Crate button can be styled using CSS. The button is rendered in a shadow DOM, but you can target it using WidgetBot's CSS injection feature via the configuration options.
@@ -149,23 +66,6 @@ If you see "No configuration provided" message:
 2. Fill in the required `server_id` and `channel_id` fields
 3. Save the configuration
 4. Refresh the page
-
-## Files Structure
-
-```
-widgetbot/
-├── WidgetBot.php              # Main plugin class
-├── conf.yml                   # Plugin configuration schema
-├── Controllers/
-│   └── WidgetBotController.php # API controllers
-├── Routes/
-│   └── widgetbot.php          # Route definitions
-├── Frontend/
-│   ├── index.js               # Frontend JavaScript (Crate integration)
-│   ├── index.css              # Plugin styles
-│   └── sidebar.json           # Sidebar configuration
-└── README.md                  # This file
-```
 
 ## Requirements
 
